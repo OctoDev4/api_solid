@@ -15,6 +15,7 @@ export class PrismaUserRepository implements UsersRepository {
     // Retorna o usuário encontrado ou null se não houver correspondência
     return user;
   }
+
   
   // Método assíncrono para criar um novo usuário no banco de dados
   async create(data: Prisma.UserCreateInput): Promise<User> {
@@ -25,4 +26,5 @@ export class PrismaUserRepository implements UsersRepository {
     // Retorna o usuário criado
     return user;
   }
+  
 }
