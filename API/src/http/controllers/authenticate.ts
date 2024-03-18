@@ -5,6 +5,7 @@ import {z} from "zod";
 import {PrismaUserRepository} from "@/repositories/prisma/prisma-users-repository";
 import {AuthenticateUseCase} from "@/use-cases/authenticate";
 import {InvalidCredentialsError} from "@/use-cases/errors/invalid-credentials-error";
+import {makeAuthenticateUseCase} from "@/use-cases/factories/make-authenticate-use-case";
 
 
 // Função de Registro
@@ -19,9 +20,7 @@ export async function AuthenticateRoute(request: FastifyRequest, reply: FastifyR
     const {email, password} = authenticateBodySchema.parse(request.body);
 
     try {
-        const prismaUserRepository = new PrismaUserRepository
-         ();
-        const authenticateUserCase = new AuthenticateUseCase(prismaUserRepository)
+       const authenticateUserCase = makeAuthenticateUseCase()
 
          await authenticateUserCase.execute({email, password});
 
