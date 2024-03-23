@@ -20,13 +20,30 @@ describe("Fetch Check in history", () => {
         await checkInRepository.create({ gym_id: '01', user_id: 'user-01' });
         await checkInRepository.create({ gym_id: '02', user_id: 'user-01' });
 
-        const { checkIns } = await sut.execute({ userId: 'user-01' });
+        const { checkIns } = await sut.execute({ userId: 'user-01', page: 1 });
 
-        // Verificar se o resultado é uma matriz de check-ins
-        expect(Array.isArray(checkIns)).toBe(true);
-        // Verificar se o resultado não está vazio
-        expect(checkIns.length).toBeGreaterThan(0);
-        // Verificar se os check-ins pertencem ao usuário específico
-        expect(checkIns.every(checkIn => checkIn.user_id === 'user-01')).toBe(true);
+          expect(checkIns).toHaveLength(2);
+          expect(checkIns).toEqual([
+              expect.objectContaining({ gym_id: '01' }),
+              expect.objectContaining({ gym_id: '02' })
+          ])
+
+    });
+
+    it('it should able to fetch paginated user check in history', async () => {
+        // Adicionar alguns check-ins para o repositório antes de buscar o histórico
+      for (let i=1; i <= 22; i++){
+          await checkInRepository.create({ gym_id: `${i}`, user_id: 'user-01' });
+
+        }
+
+        const { checkIns } = await sut.execute({ userId: 'user-01' , page: 2});
+
+        expect(checkIns).toHaveLength(2);
+        expect(checkIns).toEqual([
+            expect.objectContaining({ gym_id: '21' }),
+            expect.objectContaining({ gym_id: '22' })
+        ])
+
     });
 });
