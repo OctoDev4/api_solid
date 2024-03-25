@@ -37,10 +37,40 @@ export class InMemoryCheckInsRepository implements ChecksInRepository {
             .slice((page - 1) * 20, page * 20); // Paginação de 20 itens por página
     }
 
+    async findById(id: string) {
+        const checkIn = this.items.find((item) => item.id === id)
+
+        if (!checkIn) {
+            return null
+        }
+
+        return checkIn
+    }
+
+    // Método para salvar um check-in
+    async save(checkIn: CheckIn){
+        // Encontra o índice do check-in no array de items que tem o mesmo ID do check-in fornecido
+        const checkInIndex = this.items.findIndex(item=>item.id === checkIn.id)
+
+        // Se encontrar um check-in com o mesmo ID no array de items
+        if (checkInIndex >= 0){
+            // Substitui o check-in existente no array pelo novo check-in fornecido
+            this.items[checkInIndex] = checkIn
+        }
+
+
+        return checkIn
+    }
+
+
+
     // Método para contar o número total de check-ins de um usuário
     async countByUserId(userId: string) {
         return this.items.filter(item => item.user_id === userId).length;
     }
+
+
+
 
     // Método para criar um novo check-in
     async create(data: Prisma.CheckInUncheckedCreateInput) {

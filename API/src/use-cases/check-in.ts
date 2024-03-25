@@ -5,6 +5,7 @@ import { ResourceNotFoundError } from "@/use-cases/errors/resource-not-found-err
 import { getDistanceBetweenCoordinates } from "@/utils/get-distance-between-coordinates";
 
 import { MaxDistanceError } from "@/use-cases/errors/max-distance-error";
+import {MaxNumberOfCheckInsErros} from "@/use-cases/errors/max-number-of-check-ins-erros";
 
 interface CheckInUserCaseRequest {
     userId: string;
@@ -57,7 +58,7 @@ export class CheckInUserCase {
         );
 
         if (checkInOnSameDay) {
-            throw new MaxDistanceError();
+            throw new MaxNumberOfCheckInsErros();
         }
 
         const checkIn = await this.checkInRepository.create({
