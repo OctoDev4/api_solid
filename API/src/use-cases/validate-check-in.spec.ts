@@ -1,9 +1,10 @@
 import { InMemoryCheckInsRepository } from "@/repositories/in-memory/in-memory-check-ins-repository";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Decimal } from "@prisma/client/runtime/library";
+
 import {ValidateCheckInUseCase} from "@/use-cases/validate-check-in";
 import {ResourceNotFoundError} from "@/use-cases/errors/resource-not-found-error";
+import {LateCheckInValidationError} from "@/use-cases/errors/late-check-in-validation-error";
 
 let checkInRepository: InMemoryCheckInsRepository;
 
@@ -15,11 +16,11 @@ describe("Check-in use case", () => {
         sut = new ValidateCheckInUseCase(checkInRepository);
 
 
-        //vi.useFakeTimers();
+        vi.useFakeTimers();
     });
 
     afterEach(() => {
-       // vi.useRealTimers();
+        vi.useRealTimers();
     });
 
     it('should be able to check in', async () => {
@@ -47,4 +48,22 @@ describe("Check-in use case", () => {
       ).rejects.toBeInstanceOf(ResourceNotFoundError)
         
     });
+
+    it('should not be able to validate the check in after 20 minutes of its creation', async () => {
+       vi.setSystemTime(new Date(2024,0,1,13,40))//utc
+
+        const createdCheckIn = await checkInRepository.create({
+            gym_id:'gym_01',
+            user_id:'user_01'
+        })
+
+        const twentyOneMinutesInMs = 1000 * 600 * 21
+
+        vi.advanceTimersByTime(twentyOneMinutesInMs)
+
+       await expect(()=>sut.execute({
+            checkInId: createdCheckIn.id
+        })).rejects.toBeInstanceOf(LateCheckInValidationError)
+    })
+
 });
