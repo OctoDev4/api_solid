@@ -11,7 +11,7 @@ export async function searchGym(request:FastifyRequest,reply:FastifyReply)
 
     });
 
-    const {query,page} = searchGymsQuerySchema.parse(request.body)
+    const {query,page} = searchGymsQuerySchema.parse(request.query)
 
 
     const searchGymsUseCase = makeSearchGymsUseCase()
@@ -21,7 +21,7 @@ export async function searchGym(request:FastifyRequest,reply:FastifyReply)
         page
     })
 
-    return reply.status(201).send({
+    return reply.status(200).send({
         gyms: gyms
     })
 
