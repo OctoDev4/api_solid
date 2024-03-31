@@ -26,14 +26,22 @@ export async function AuthenticateRoute(request: FastifyRequest, reply: FastifyR
         const { user } = await authenticateUserCase.execute({ email, password });
 
         // Gera o token de autenticação JWT
-        const token = await reply.jwtSign({}, {
+        const token = await reply.jwtSign(
+            {
+                role:user.role
+            }, {
             sign: {
                 sub: user.id,
             },
         });
 
         // Gera o token de atualização JWT
-        const refreshToken = await reply.jwtSign({}, {
+        const refreshToken = await reply.jwtSign(
+            {
+                role:user.role
+            },
+
+            {
             sign: {
                 sub: user.id,
                 expiresIn: '7d',
