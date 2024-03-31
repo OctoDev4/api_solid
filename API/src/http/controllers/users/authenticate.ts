@@ -42,7 +42,7 @@ export async function AuthenticateRoute(request: FastifyRequest, reply: FastifyR
 
         // Retorna uma resposta de sucesso com o token de autenticação e mensagem
         return reply.status(200)
-            .setCookie('refreshToken', refreshToken, { // Define um cookie de refreshToken
+            .setCookie('refreshToken',refreshToken, { // Define um cookie de refreshToken
                 path: '/', // todas rotas tera acesso
                 secure: true, // Define o cookie como seguro (HTTPS)
                 sameSite: true, // Define a política sameSite como true
